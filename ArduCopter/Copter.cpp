@@ -630,7 +630,7 @@ void Copter::one_hz_loop()
 
     AP_Notify::flags.flying = !ap.land_complete;
 
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "Hello from TD100!");
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "PreArm: What the Fuck are you looking at?");
 }
 
 void Copter::init_simple_bearing()
