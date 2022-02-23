@@ -629,6 +629,8 @@ void Copter::one_hz_loop()
 #endif
 
     AP_Notify::flags.flying = !ap.land_complete;
+
+    gcs().send_text(MAV_SEVERITY_CRITICAL, "Hello from TD100!");
 }
 
 void Copter::init_simple_bearing()
