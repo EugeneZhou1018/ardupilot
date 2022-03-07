@@ -185,6 +185,79 @@ uint32_t RGBLed::get_colour_sequence_traffic_light(void) const
     return DEFINE_COLOUR_SEQUENCE_SLOW(GREEN);
 }
 
+uint32_t RGBLed::get_colour_sequence_td100(void) const
+{
+    // initialising pattern
+    if (AP_Notify::flags.initialising) {
+        return sequence_initialising;
+    }
+
+    // save trim or any calibration pattern
+    if (AP_Notify::flags.save_trim ||
+        AP_Notify::flags.esc_calibration ||
+        AP_Notify::flags.compass_cal_running ||
+        AP_Notify::flags.temp_cal_running) {
+        return sequence_trim_or_esc;
+    }
+
+    // radio and battery failsafe patter: flash yellow
+    // gps failsafe pattern : flashing yellow and blue
+    // ekf_bad pattern : flashing yellow and red
+    if (AP_Notify::flags.failsafe_radio ||
+        AP_Notify::flags.failsafe_gcs ||
+        AP_Notify::flags.failsafe_battery ||
+        AP_Notify::flags.ekf_bad ||
+        AP_Notify::flags.gps_glitching ||
+        AP_Notify::flags.leak_detected) {
+
+        if (AP_Notify::flags.leak_detected) {
+            // purple if leak detected
+            return sequence_failsafe_leak;
+        } else if (AP_Notify::flags.ekf_bad) {
+            // red on if ekf bad
+            return sequence_failsafe_ekf;
+        } else if (AP_Notify::flags.gps_glitching) {
+            // blue on gps glitch
+            return sequence_failsafe_gps_glitching;
+        }
+        // all off for radio or battery failsafe
+        return sequence_failsafe_radio_or_battery;
+    }
+
+    // solid green or blue if armed
+    if (AP_Notify::flags.armed) {
+        //Turn LED off (black) if takeoff and above specify altitude
+        if (AP_Notify::flags.gps_status >= AP_GPS::GPS_OK_FIX_3D && 150 >= pNotify->_led_off_alt) {
+            return sequence_armed_and_above_alt;
+        }
+        //solid green if armed with GPS 3d lock
+        if (AP_Notify::flags.gps_status >= AP_GPS::GPS_OK_FIX_3D) {
+            return sequence_armed;
+        }
+        // solid blue if armed with no GPS lock
+        return sequence_armed_nogps;
+    }
+
+    // double flash yellow if failing pre-arm checks
+    if (!AP_Notify::flags.pre_arm_check) {
+        return sequence_prearm_failing;
+    }
+
+    if (AP_Notify::flags.gps_status >= AP_GPS::GPS_OK_FIX_3D_RTK_FIXED && AP_Notify::flags.pre_arm_gps_check) {
+        return sequence_disarmed_good_rtk_fix;
+    }
+
+    if (AP_Notify::flags.gps_status >= AP_GPS::GPS_OK_FIX_3D_DGPS && AP_Notify::flags.pre_arm_gps_check) {
+        return sequence_disarmed_good_dgps;
+    }
+
+    if (AP_Notify::flags.gps_status >= AP_GPS::GPS_OK_FIX_3D && AP_Notify::flags.pre_arm_gps_check) {
+        return sequence_disarmed_good_gps;
+    }
+
+    return sequence_disarmed_bad_gps;
+}
+
 // update - updates led according to timed_updated.  Should be called
 // at 50Hz
 void RGBLed::update()
@@ -204,6 +277,8 @@ void RGBLed::update()
     case traffic_light:
         current_colour_sequence = get_colour_sequence_traffic_light();
         break;
+    case td100:
+        current_colour_sequence = get_colour_sequence_td100();
     }
 
     const uint8_t brightness = get_brightness();

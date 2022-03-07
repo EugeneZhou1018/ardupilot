@@ -67,6 +67,7 @@ private:
     uint32_t get_colour_sequence() const;
     uint32_t get_colour_sequence_obc() const;
     uint32_t get_colour_sequence_traffic_light() const;
+    uint32_t get_colour_sequence_td100() const;
 
     uint8_t get_brightness(void) const;
 
@@ -103,12 +104,17 @@ private:
     const uint32_t sequence_disarmed_good_gps = DEFINE_COLOUR_SEQUENCE_SLOW(GREEN);
     const uint32_t sequence_disarmed_bad_gps = DEFINE_COLOUR_SEQUENCE_SLOW(BLUE);
 
+    const uint32_t sequence_disarmed_good_rtk_fix = DEFINE_COLOUR_SEQUENCE(GREEN,BLACK,BLACK,BLACK,BLACK,GREEN,GREEN,GREEN,GREEN,BLACK);
+    const uint32_t sequence_armed_and_above_alt = DEFINE_COLOUR_SEQUENCE_SOLID(BLACK);
+
     uint8_t last_step;
     enum rgb_source_t {
         standard = 0,
         mavlink = 1,
         obc = 2,
         traffic_light = 3,
+        td100 = 4,
+
     };
     rgb_source_t rgb_source() const;
 

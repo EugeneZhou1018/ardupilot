@@ -210,6 +210,8 @@ const AP_Param::GroupInfo AP_Notify::var_info[] = {
     // @RebootRequired: True
     AP_GROUPINFO("LED_LEN", 9, AP_Notify, _led_len, NOTIFY_LED_LEN_DEFAULT),
 
+    AP_GROUPINFO("LED_OFF_ALT", 10, AP_Notify, _led_off_alt, 100),
+
     AP_GROUPEND
 };
 
