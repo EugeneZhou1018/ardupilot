@@ -18,6 +18,8 @@
 
 #include <AP_HAL/AP_HAL.h>
 #include <AP_GPS/AP_GPS.h>
+#include <AP_AHRS/AP_AHRS.h>
+#include <AP_AHRS/AP_AHRS_View.h>
 #include "RGBLed.h"
 #include "AP_Notify.h"
 
@@ -227,7 +229,12 @@ uint32_t RGBLed::get_colour_sequence_td100(void) const
     // solid green or blue if armed
     if (AP_Notify::flags.armed) {
         //Turn LED off (black) if takeoff and above specify altitude
-        if (AP_Notify::flags.gps_status >= AP_GPS::GPS_OK_FIX_3D && 150 >= pNotify->_led_off_alt) {
+
+        float current_alt;
+        AP::ahrs().get_relative_position_D_home(current_alt);
+        current_alt *= -100.0f;//Cover M to CM
+
+        if (AP_Notify::flags.gps_status >= AP_GPS::GPS_OK_FIX_3D && current_alt >= pNotify->_led_off_alt) {
             return sequence_armed_and_above_alt;
         }
         //solid green if armed with GPS 3d lock

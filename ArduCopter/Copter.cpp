@@ -630,7 +630,10 @@ void Copter::one_hz_loop()
 
     AP_Notify::flags.flying = !ap.land_complete;
 
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "Alt = %ld", copter.flightmode->get_alt_above_ground_cm());
+    // float Alt1;
+    // AP::ahrs().get_relative_position_D_home(Alt1);
+
+    // gcs().send_text(MAV_SEVERITY_CRITICAL, "Alt = %1f", Alt1);
 }
 
 void Copter::init_simple_bearing()
