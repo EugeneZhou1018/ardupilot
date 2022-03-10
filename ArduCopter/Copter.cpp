@@ -80,6 +80,12 @@
 #include "version.h"
 #undef FORCE_VERSION_H_INCLUDE
 
+uint16_t output_R = 0;
+uint16_t output_G = 2000;
+uint16_t output_B = 0;
+
+uint8_t led_stage = 0;
+
 const AP_HAL::HAL& hal = AP_HAL::get_HAL();
 
 #define SCHED_TASK(func, _interval_ticks, _max_time_micros, _prio) SCHED_TASK_CLASS(Copter, &copter, func, _interval_ticks, _max_time_micros, _prio)
@@ -177,6 +183,7 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
 #endif
 #if LOGGING_ENABLED == ENABLED
     SCHED_TASK(ten_hz_logging_loop,   10,    350, 114),
+    SCHED_TASK(led_fade,             100,    350, 115),
     SCHED_TASK(twentyfive_hz_logging, 25,    110, 117),
     SCHED_TASK_CLASS(AP_Logger,            &copter.logger,              periodic_tasks, 400, 300, 120),
 #endif
@@ -629,6 +636,57 @@ void Copter::one_hz_loop()
 #endif
 
     AP_Notify::flags.flying = !ap.land_complete;
+}
+
+void Copter::led_fade()
+{
+
+    //SRV_Channels::set_output_pwm_trimmed(SRV_Channel::k_LED_Board_R,2000);
+    
+    if (led_stage == 0){
+        
+        output_R += 10;
+        SRV_Channels::set_output_pwm_trimmed(SRV_Channel::k_LED_Board_R,output_R);
+        output_G -= 10;
+        SRV_Channels::set_output_pwm_trimmed(SRV_Channel::k_LED_Board_G,output_G);
+
+        if (output_R >= 2000 && output_G <= 0){
+            led_stage = 1;
+            output_R = 2000;
+            output_G = 0;
+            output_B = 0;
+        }
+       
+    }
+    if (led_stage == 1){
+
+        output_R -= 10;
+        SRV_Channels::set_output_pwm_trimmed(SRV_Channel::k_LED_Board_R,output_R);
+        output_B += 10;
+        SRV_Channels::set_output_pwm_trimmed(SRV_Channel::k_LED_Board_B,output_B);
+
+        if (output_B >= 2000 && output_R <= 0){
+            led_stage = 2;
+            output_R = 0;
+            output_G = 0;
+            output_B = 2000;
+        }
+    }
+    else if (led_stage == 2){
+
+        output_B -= 10;
+        SRV_Channels::set_output_pwm_trimmed(SRV_Channel::k_LED_Board_B,output_B);
+        output_G += 10;
+        SRV_Channels::set_output_pwm_trimmed(SRV_Channel::k_LED_Board_G,output_G);
+
+        if (output_G >= 2000 && output_B <= 0){
+            led_stage = 0;
+            output_R = 0;
+            output_G = 2000;
+            output_B = 0;
+        }
+    }
+
 }
 
 void Copter::init_simple_bearing()

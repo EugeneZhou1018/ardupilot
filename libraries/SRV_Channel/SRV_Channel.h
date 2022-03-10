@@ -178,6 +178,10 @@ public:
         k_mast_rotation         = 137,
         k_alarm                 = 138,
         k_alarm_inverted        = 139,
+        k_LED_Board_R           = 140,
+        k_LED_Board_G           = 141,
+        k_LED_Board_B           = 142,
+        k_LED_Board_W           = 143,
         k_nr_aux_servo_functions         ///< This must be the last enum value (only add new values _before_ this one)
     } Aux_servo_function_t;
 

@@ -670,6 +670,7 @@ private:
     void update_super_simple_bearing(bool force_update);
     void read_AHRS(void);
     void update_altitude();
+    void led_fade();
 
     // Attitude.cpp
     void update_throttle_hover();
