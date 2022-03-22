@@ -1005,6 +1005,36 @@ private:
     bool takeoff_complete;      // true once takeoff has completed (used to trigger retracting of landing gear)
 };
 
+class ModeSquare : public Mode {
+
+public:
+    // inherit constructor
+    using Mode::Mode;
+    Number mode_number() const override { return Number::GUIDED; }
+
+    bool init(bool ignore_checks) override;
+    void run() override;
+
+    bool requires_GPS() const override { return true; }
+    bool has_manual_throttle() const override { return false; }
+    bool allows_arming(AP_Arming::Method method) const override { return false; }
+    bool is_autopilot() const override { return true; }
+    bool has_user_takeoff(bool must_navigate) const override { return false; }
+    bool in_guided_mode() const override { return true; }
+
+    bool requires_terrain_failsafe() const override { return true; }
+
+protected:
+
+    const char *name() const override { return "SQUARE"; }
+    const char *name4() const override { return "SQUARE"; }
+
+private:
+
+    void pos_control_start();
+    void pos_control_run();
+
+};
 
 class ModeGuidedNoGPS : public ModeGuided {
 
