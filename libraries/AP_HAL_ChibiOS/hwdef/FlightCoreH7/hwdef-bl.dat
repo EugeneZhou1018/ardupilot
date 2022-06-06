@@ -1,0 +1,59 @@
+# hw definition file for processing by chibios_hwdef.py
+# for H743 bootloader
+
+# MCU class and specific type
+MCU STM32H7xx STM32H743xx
+
+# USB setup
+USB_STRING_MANUFACTURER "TaiwanDrone100"
+
+# crystal frequency
+OSCILLATOR_HZ 24000000
+
+# board ID for firmware load
+APJ_BOARD_ID 1018
+
+FLASH_SIZE_KB 2048
+
+# bootloader is installed at zero offset
+FLASH_RESERVE_START_KB 0
+
+# the location where the bootloader will put the firmware
+# the H743 has 128k sectors
+FLASH_BOOTLOADER_LOAD_KB 128
+
+define HAL_LED_ON 0
+
+# order of UARTs (and USB)
+SERIAL_ORDER OTG1 UART7
+
+# UART7 (DEBUG)
+PF6 UART7_RX UART7 NODMA
+PE8 UART7_TX UART7 NODMA
+
+PA11 OTG_FS_DM OTG1
+PA12 OTG_FS_DP OTG1
+
+PA13 JTMS-SWDIO SWD
+PA14 JTCK-SWCLK SWD
+
+# Add CS pins to ensure they are high in bootloader
+#----------SPI CS Define----------#
+# SPI1 - on board BMI088 & DPS310
+PK4     BMI088_A_CS CS
+PK5	    BMI088_G_CS CS
+PG10    DPS310_CS   CS
+# SPI2 - only FRAM
+PF5     FRAM_CS     CS SPEED_VERYLOW
+# SPI4
+PI9	    SPI4_CS1
+PI10	SPI4_CS2
+PI11	SPI4_CS3
+# SPI5 - external1 sensors
+PF3	    SPI5_CS1
+PF4	    SPI5_CS2
+PF5	    SPI5_CS3
+# SPI6
+PI12	SPI6_CS1
+PI13	SPI6_CS2
+PI14	SPI6_CS3
