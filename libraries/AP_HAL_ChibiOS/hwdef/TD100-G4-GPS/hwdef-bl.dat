@@ -9,8 +9,8 @@ FLASH_BOOTLOADER_LOAD_KB 32
 # reserve some space for params
 APP_START_OFFSET_KB 4
 
-# assume 512k flash part
-FLASH_SIZE_KB 512
+# assume 256k flash part
+FLASH_SIZE_KB 256
 
 # board ID for firmware load
 APJ_BOARD_ID 1053
