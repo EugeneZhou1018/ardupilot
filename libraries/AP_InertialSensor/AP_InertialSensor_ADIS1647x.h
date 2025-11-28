@@ -15,6 +15,8 @@
 /*
   the ADIS1647x is unusual as it uses 16 bit registers. It also needs
   to run as the only sensor on the SPI bus for good performance
+  
+  Now supports ADIS16470, ADIS16477, ADIS16500, and ADIS16507
  */
 #pragma once
 
@@ -61,9 +63,9 @@ private:
     AP_HAL::OwnPtr<AP_HAL::Device> dev;
 
     enum class OpMode : uint8_t {
-        Basic      =1,
-        AG32       =2,
-        Delta32    =3
+        Basic      =1,  // Used by ADIS16470 and ADIS16500
+        AG32       =2,  // 32-bit accel/gyro mode
+        Delta32    =3   // Used by ADIS16507 for delta-angle/delta-velocity
     } opmode;
 
     enum Rotation rotation;
@@ -77,6 +79,6 @@ private:
 
     float accel_scale;
     float gyro_scale;
-    double dangle_scale;
-    double dvel_scale;
+    double dangle_scale;  // Used for ADIS16507 delta-angle
+    double dvel_scale;    // Used for ADIS16507 delta-velocity
 };
