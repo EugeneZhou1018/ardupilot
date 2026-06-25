@@ -1,0 +1,288 @@
+# hw definition file for processing by chibios_hwdef.py
+USB_STRING_MANUFACTURER "TaiwanDrone100"
+
+# MCU class and specific type
+MCU STM32H7xx STM32H755xx
+
+define CORE_CM7
+# define SMPS_PWR
+
+# crystal frequency
+OSCILLATOR_HZ 16000000
+
+# ChibiOS system timer
+STM32_ST_USE_TIMER 2
+
+# board ID for firmware load
+APJ_BOARD_ID 1018
+
+FLASH_RESERVE_START_KB 128
+
+# flash size
+FLASH_SIZE_KB 2048
+
+env OPTIMIZE -O2
+
+# order of UARTs (and USB)
+SERIAL_ORDER OTG1 UART7 UART5 USART1 UART8 USART2 EMPTY USART3 OTG2
+
+# default to all pins low to avoid ESD issues
+DEFAULTGPIO OUTPUT LOW PULLDOWN
+
+# USB
+PA11 OTG_FS_DM OTG1
+PA12 OTG_FS_DP OTG1
+PA9 VBUS INPUT OPENDRAIN
+
+# pins for SWD debugging
+PA13 JTMS-SWDIO SWD
+PA14 JTCK-SWCLK SWD
+
+# telem1
+PE8 UART7_TX UART7
+PF6 UART7_RX UART7
+PE9 UART7_RTS UART7
+PE10 UART7_CTS UART7
+
+# telem2
+PC12 UART5_TX UART5
+PD2 UART5_RX UART5
+PC8 UART5_RTS UART5
+PC9 UART5_CTS UART5
+
+# telem3
+PD5 USART2_TX USART2
+PA3 USART2_RX USART2
+PD3 USART2_CTS USART2
+PD4 USART2_RTS USART2
+
+# GPS1
+PB6 USART1_TX USART1
+PB7 USART1_RX USART1
+
+# GPS2
+PE0 UART8_RX UART8
+PE1 UART8_TX UART8
+
+# debug uart
+PD8 USART3_TX USART3
+PD9 USART3_RX USART3
+
+# USART6 is for IOMCU
+PG14 USART6_TX USART6
+PC7  USART6_RX USART6
+IOMCU_UART USART6
+
+# uart6, RX only, RC input, if no IOMCU
+# PC7 USART6_RX USART6
+
+PC1 ETH_MDC              ETH1
+PA2 ETH_MDIO             ETH1
+PC4 ETH_RMII_RXD0        ETH1
+PC5 ETH_RMII_RXD1        ETH1
+PG13 ETH_RMII_TXD0       ETH1
+PG12 ETH_RMII_TXD1       ETH1
+PG11 ETH_RMII_TX_EN      ETH1
+PA7 ETH_RMII_CRS_DV      ETH1
+PA1 ETH_RMII_REF_CLK     ETH1
+#PG10 ETH_POWER_EN       ETH1
+
+PG10 Ethernet_PWR_EN OUTPUT HIGH # disable power on ethernet
+
+define BOARD_PHY_ID  MII_LAN8742A_ID
+define BOARD_PHY_RMII
+
+
+# ADC
+PA4 SCALED1_V3V3 ADC1 SCALE(2)
+PC0 VDD_5V_SENS  ADC1 SCALE(2)
+
+# pin7 on AD&IO, analog 12
+PC2 ADC1_6V6 ADC1 SCALE(2)
+
+# pin6 on AD&IO, analog 13
+PC3 ADC1_3V3 ADC1 SCALE(1)
+
+# SPI3 - EXT BMI088 & ON-BOARD ICM45686 
+PC10 SPI3_SCK  SPI3
+PB2  SPI3_MOSI SPI3
+PC11 SPI3_MISO SPI3
+PG7  EXT_BMI088_GYRO CS
+PG8  EXT_BMI088_ACCEL CS
+PA10 EXT_BMI088_DRDY1 INPUT
+PD7  ICM45686_CS CS
+
+#PI7 SP3_DRDY2 INPUT GPIO(93)
+#define SP3_DRDY2 93
+
+# SPI4 - EXT ICM45686
+PE12 SPI4_SCK SPI4
+PE14 SPI4_MOSI SPI4
+PE13 SPI4_MISO SPI4
+PE15 EXT_ICM45686_CS CS
+PD10 EXT_ICM45686_DRDY1 INPUT
+
+# SPI5 - FRAM
+PF7  SPI5_SCK  SPI5
+PF11 SPI5_MOSI SPI5
+PF8  SPI5_MISO SPI5
+PF10 FRAM_CS CS
+
+# SPI6 - external1 (disabled to save DMA channels)
+# PA5  SPI6_SCK SPI6
+# PB5  SPI6_MOSI SPI6
+# PA6  SPI6_MISO SPI6
+# PE6  EXT_CS1 CS
+# PG9  EXT_CS2 CS
+
+# PWM output pins
+PD12 TIM4_CH1 TIM4 PWM(1) GPIO(50)
+PD13 TIM4_CH2 TIM4 PWM(2) GPIO(51)
+PD14 TIM4_CH3 TIM4 PWM(3) GPIO(52)
+PD15 TIM4_CH4 TIM4 PWM(4) GPIO(53)
+PA8  TIM1_CH1 TIM1 PWM(5) GPIO(54)
+PE11 TIM1_CH2 TIM1 PWM(6) GPIO(55)
+
+# we need to disable DMA on the last 2 FMU channels
+# as timer 12 doesn't have a TIMn_UP DMA option
+PB0  TIM3_CH3 TIM3 PWM(7) GPIO(56) NODMA
+PB1  TIM3_CH4 TIM3 PWM(8) GPIO(57) NODMA
+
+# CAN bus
+PD0  CAN1_RX CAN1
+PD1  CAN1_TX CAN1
+
+PB12 CAN2_RX CAN2
+PB13 CAN2_TX CAN2
+
+# I2C1, GPS1 & INTERNAL BARO
+PB8 I2C1_SCL I2C1
+PB9 I2C1_SDA I2C1
+
+# I2C2, GPS2
+PB10 I2C2_SCL I2C2
+PB11 I2C2_SDA I2C2
+
+# I2C4, EXT BARO & COMPASS, optional on-board IST8310
+PF14 I2C4_SCL I2C4
+PF15 I2C4_SDA I2C4
+
+# order of I2C buses
+I2C_ORDER I2C4 I2C1 I2C2
+define HAL_I2C_INTERNAL_MASK 1
+
+# heater
+PA15 HEATER_EN OUTPUT LOW GPIO(80)
+define HAL_HEATER_GPIO_PIN 80
+
+# Setup the IMU heater
+define HAL_HAVE_IMU_HEATER 1
+define HAL_IMU_TEMP_DEFAULT 45
+define HAL_IMUHEAT_P_DEFAULT 50
+define HAL_IMUHEAT_I_DEFAULT 0.07
+
+# power enable pins
+PC13 VDD_3V3_SD_CARD_EN OUTPUT HIGH
+PE7  VDD_3V3_SENSORS_EN OUTPUT HIGH
+
+# start peripheral power on
+PE4  nVDD_5V_HIPOWER_EN OUTPUT LOW
+PE3  nVDD_5V_PERIPH_EN  OUTPUT LOW
+
+# power sensing
+PE5 VDD_5V_HIPOWER_nOC INPUT PULLUP
+PE2 VDD_5V_PERIPH_nOC INPUT PULLUP
+
+# microSD support
+PD6  SDMMC2_CK SDMMC2
+PA0  SDMMC2_CMD SDMMC2
+PB14 SDMMC2_D0 SDMMC2
+PB15 SDMMC2_D1 SDMMC2
+PB3 SDMMC2_D2 SDMMC2
+PB4  SDMMC2_D3 SDMMC2
+define FATFS_HAL_DEVICE SDCD2
+
+# safety
+PG6  LED_SAFETY OUTPUT
+PD11 SAFETY_IN INPUT PULLDOWN
+
+# PWM output for buzzer
+PF9 TIM14_CH1 TIM14 GPIO(77) ALARM
+
+# RC input
+PC6 TIM8_CH1 TIM8 RCININT PULLDOWN LOW
+
+# barometers
+BARO DPS310 I2C:0:0x77
+BARO DPS310 I2C:1:0x77
+
+# compass
+define AP_COMPASS_PROBING_ENABLED 1
+define AP_COMPASS_INTERNAL_BUS_PROBING_ENABLED 0
+
+# builtin compass
+COMPASS RM3100  I2C:0:0x20 false ROTATION_NONE
+COMPASS IST8310 I2C:0:0x0C false ROTATION_ROLL_180_YAW_270
+
+# IMU 0 (EXT)
+SPIDEV bmi088_g     SPI3 DEVID1  EXT_BMI088_GYRO    MODE3 10*MHZ 10*MHZ
+SPIDEV bmi088_a     SPI3 DEVID2  EXT_BMI088_ACCEL   MODE3 10*MHZ 10*MHZ
+
+# IMU 1 (EXT)
+SPIDEV icm45686_ext SPI4 DEVID1  EXT_ICM45686_CS  MODE3  2*MHZ  8*MHZ
+
+# IMU 2 (ON BOARD BACKUP)
+SPIDEV icm45686     SPI3 DEVID1  ICM45686_CS  MODE3  2*MHZ  8*MHZ
+
+# INSTANCE:<num> keyword is used to denote the instance number of the sensor
+# while probing. Probing is skipped if the instance number doesn't match the
+# backend count. Its important the IMUs are listed in order of precedence globally
+# (i.e. INSTANCE:0 IMUs are listed before INSTANCE:1 IMUs) and locally (i.e. IMUs
+# on the same bus are listed in order of detection precedence)
+
+# AUX:<devid> keyword is used to check for the presence of the sensor
+# in the detected IMUs list. If the IMU with the given devid is found
+# then we skip the probe for the sensor the second time. This is useful
+# if you have multiple choices for IMU over same instance number, and still 
+# want to instantiate the sensor after main IMUs are detected.
+
+IMU BMI088       SPI:bmi088_a SPI:bmi088_g ROTATION_PITCH_180
+IMU Invensensev3 SPI:icm45686_ext          ROTATION_ROLL_180_YAW_270
+IMU Invensensev3 SPI:icm45686              ROTATION_ROLL_180
+
+define HAL_INS_HIGHRES_SAMPLE 7
+define HAL_DEFAULT_INS_FAST_SAMPLE 7
+
+# FRAM
+SPIDEV ramtron   SPI5 DEVID1  FRAM_CS     MODE3  8*MHZ  8*MHZ
+
+# enable RAMTROM parameter storage
+define HAL_STORAGE_SIZE 32768
+define HAL_WITH_RAMTRON 1
+
+# INA226 battery monitor
+define HAL_BATTMON_INA2XX_BUS 1
+define HAL_BATTMON_INA2XX_ADDR 0
+define HAL_BATT_MONITOR_DEFAULT 21
+
+# allow to have have a dedicated safety switch pin
+define HAL_HAVE_SAFETY_SWITCH 1
+
+DMA_PRIORITY SDMMC* USART6* ADC* UART* USART* SPI* TIM*
+
+# enable FAT filesystem support (needs a microSD defined via SDMMC)
+define HAL_OS_FATFS_IO 1
+
+ROMFS io_firmware.bin Tools/IO_Firmware/iofirmware_f103_lowpolh.bin
+
+# enable DFU reboot for installing bootloader
+# note that if firmware is build with --secure-bl then DFU is
+# disabled
+ENABLE_DFU_BOOT 1
+
+# build ABIN for flash-from-bootloader support:
+env BUILD_ABIN True
+
+# enable support for dshot on iomcu
+ROMFS io_firmware_dshot.bin Tools/IO_Firmware/iofirmware_f103_dshot_lowpolh.bin
+define HAL_WITH_IO_MCU_BIDIR_DSHOT 1
